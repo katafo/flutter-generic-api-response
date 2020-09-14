@@ -26,7 +26,7 @@ class APIController {
      // get response
      // use response to parse from json to object T
      
-     // problem: we can not call T.fromJson in here. Because Dart don't know what is extracly T object.
+     // problem: we can not call T.fromJson in here. Because Dart don't know what exactly is T object.
    }
 }
 ```
