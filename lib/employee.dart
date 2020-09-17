@@ -2,10 +2,10 @@ import 'api/decodable.dart';
 
 class Employee implements Decodable<Employee> {
 
-  String id;
+  int id;
   String name;
-  String salary;
-  String age;
+  int salary;
+  int age;
   String profileImage;
 
   @override
