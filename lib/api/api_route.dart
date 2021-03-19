@@ -4,6 +4,7 @@ enum APIType {
 
   listEmployees,
   detailsEmployee,
+  refreshToken
 
 }
 
@@ -18,6 +19,9 @@ class APIRoute implements APIRouteConfigurable {
   @override
   RequestOptions getConfig() {
 
+    // pass extra value to detect public or auth api
+    const noAuth = { 'no_auth': true };
+
     switch (type) {
 
       //login
@@ -25,6 +29,7 @@ class APIRoute implements APIRouteConfigurable {
         return RequestOptions(
           path: '/employees',
           method: APIMethod.get,
+          extra: noAuth
         );
       
       case APIType.detailsEmployee:

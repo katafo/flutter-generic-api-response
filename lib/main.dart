@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'api/api_client.dart';
 import 'api/api_response.dart';
 import 'api/api_route.dart';
+import 'api/interceptors/auth_interceptor.dart';
 import 'api/interceptors/log_interceptor.dart';
 import 'employee.dart';
 
@@ -26,9 +27,13 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     client = APIClient(
-      BaseOptions(baseUrl: 'http://dummy.restapiexample.com/api/v1'),
-      interceptors: [APILogInterceptor()]
+      BaseOptions(baseUrl: 'http://dummy.restapiexample.com/api/v1')
     );
+    final interceptors = [
+      AuthInterceptor(client, AuthToken(expiredTime: 1616142369958)),
+      APILogInterceptor(),
+    ];
+    client.instance.interceptors.addAll(interceptors);
   }
 
   @override
@@ -100,11 +105,6 @@ class _MyAppState extends State<MyApp> {
       );
 
     final employees = result.response.data ?? [];
-    
-    for (var emp in employees) {
-      print('Name: ${emp.name}');
-    }
-
     return employees;
 
   }

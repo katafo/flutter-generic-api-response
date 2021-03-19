@@ -4,20 +4,25 @@ import 'api_response.dart';
 import 'api_route.dart';
 import 'decodable.dart';
 
-class APIOptions extends BaseOptions {}
+abstract class BaseAPIClient {
 
-class APIClient {
+  Future<ResponseWrapper<T>> request<T extends Decodable>({
+    @required APIRouteConfigurable route,
+    @required Create<T> create,
+    dynamic data,
+  });
+
+}
+class APIClient implements BaseAPIClient {
 
   final BaseOptions options;
-
   Dio instance;
-  List<Interceptor> interceptors;
 
-  APIClient(this.options, { this.interceptors }) {
+  APIClient(this.options) {
     instance = Dio(options);
-    instance.interceptors.addAll(interceptors ?? []);
   }
 
+  @override
   Future<ResponseWrapper<T>> request<T extends Decodable>({
     @required APIRouteConfigurable route,
     @required Create<T> create,
