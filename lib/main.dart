@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'api/api_controller.dart';
-import 'api/api_manager.dart';
+
+import 'api/api_client.dart';
 import 'api/api_response.dart';
+import 'api/api_route.dart';
+import 'api/interceptors/log_interceptor.dart';
 import 'employee.dart';
 
 void main() {
@@ -17,10 +20,15 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
 
   String response = '';
+  APIClient client;
 
   @override
   void initState() {
     super.initState();
+    client = APIClient(
+      BaseOptions(baseUrl: 'http://dummy.restapiexample.com/api/v1'),
+      interceptors: [APILogInterceptor()]
+    );
   }
 
   @override
@@ -86,8 +94,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<List<Employee>> fetchEmployeeList() async {
     
-    final result = await APIController.request<APIListResponse<Employee>>(
-        manager: APIManager(type: APIType.listEmployees), 
+    final result = await client.request<APIListResponse<Employee>>(
+        route: APIRoute(APIType.listEmployees), 
         create: () => APIListResponse(create: () => Employee())
       );
 
@@ -103,9 +111,9 @@ class _MyAppState extends State<MyApp> {
 
   Future<Employee> fetchEmployeeDetails(int empID) async {
 
-    final result = await APIController.request<APIResponse<Employee>>(
-      manager: APIManager(
-        type: APIType.detailsEmployee, 
+    final result = await client.request<APIResponse<Employee>>(
+      route: APIRoute(
+        APIType.detailsEmployee, 
         routeParams: '$empID'
       ), 
       create: () => APIResponse<Employee>(create: () => Employee())

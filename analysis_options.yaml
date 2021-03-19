@@ -3,3 +3,4 @@ include: package:effective_dart/analysis_options.yaml
 linter:
   rules:
     public_member_api_docs: false
+    one_member_abstracts: false
