@@ -1,12 +1,12 @@
  ## Overview
 
-This is the way I used to parse generic response object with `http` package. 
+This is the way I used to parse generic response object with `dio` package. 
 
 ## Concept
 
-- **APIManager:** Manage all information about your API (url, method, headers,...)
+- **APIRoute:** Manage all information about your API (url, method, headers,...)
 - **APIResponse:** Response objects used to wrap your API response structure.
-- **APIController:** Construct to wrap http request with APIManager, APIResponse.
+- **APIClient:** Construct to wrap http request with APIManager, APIResponse.
 - **Decodable:** Interface with `decodable` func. Every object must be **implements** it to use with APIController.
 
 Problem with Generic in Flutter is with `T` , we can not call any functions belong to this generic object. So, we can not convert it from json to object. Example:
@@ -115,13 +115,15 @@ class User implements Decodable<User> {
 }
 ```
 
-3. Make a request with APIController
+3. Make a request with APIClient
 
 ```dart
 Future<User> fetchUser() async {
 
-    final result = await APIController.request<APIResponse<User>>(
-      manager: APIManager(type: APIType.getUser), 
+    final client = APIClient();
+
+    final result = await client.request<APIResponse<User>>(
+      manager: APIRoute(APIType.getUser), 
       create: () => APIResponse<User>(create: () => User())
     );
 
