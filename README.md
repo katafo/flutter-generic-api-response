@@ -6,12 +6,12 @@ This is the way I used to parse generic response object with `dio` package.
 
 - **APIRoute:** Manage all information about your API (url, method, headers,...)
 - **APIResponse:** Response objects used to wrap your API response structure.
-- **APIClient:** Construct to wrap http request with APIManager, APIResponse.
-- **Decodable:** Interface with `decodable` func. Every object must be **implements** it to use with APIController.
+- **APIClient:** Construct to wrap http request with APIRoute, APIResponse.
+- **Decodable:** Interface with `decodable` func. Every object must be **implements** it to use with APIRoute.
 
 Problem with Generic in Flutter is with `T` , we can not call any functions belong to this generic object. So, we can not convert it from json to object. Example:
 
-Let's we have class User, APIController (http request base class)
+Let's we have class User, APIRoute (http request base class)
 
 ```dart
 class User {
@@ -20,7 +20,7 @@ class User {
   }
 }
 
-class APIController {
+class APIRoute {
    static Future<T> request<T>() {
      // make http request
      // get response
