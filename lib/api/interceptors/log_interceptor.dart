@@ -3,17 +3,17 @@ import 'package:dio/dio.dart';
 class APILogInterceptor extends InterceptorsWrapper {
 
   @override
-  Future onError(DioError err) {
+  void onError(DioError err, ErrorInterceptorHandler handler) {
     print('');
     print('# ERROR');
-    print('<-- ${err?.response?.statusCode} - ${err?.request?.uri}');
+    print('<-- ${err?.response?.statusCode} - ${err?.requestOptions?.uri}');
     print('Message: ${err?.error}');
     print('<-- END HTTP');
-    return super.onError(err);
+    return super.onError(err, handler);
   }
 
   @override
-  Future onRequest(RequestOptions options) {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     print('');
     print('# REQUEST');
     final method = options?.method?.toUpperCase();
@@ -21,17 +21,17 @@ class APILogInterceptor extends InterceptorsWrapper {
     print('Headers: ${options?.headers}');
     print('Data: ${options?.data}');
     print('--> END $method');
-    return super.onRequest(options);
+    return super.onRequest(options, handler);
   }
 
   @override
-  Future onResponse(Response response) {
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
     print('');
     print('# RESPONSE');
-    print('<-- ${response?.statusCode} - ${response?.request?.uri}');
+    print('<-- ${response?.statusCode} - ${response?.requestOptions?.uri}');
     print('Response: ${response.data}');
     print('<-- END HTTP');
-    return super.onResponse(response);
+    return super.onResponse(response, handler);
   }
 
 }

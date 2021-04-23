@@ -37,10 +37,13 @@ class AuthInterceptor extends InterceptorsWrapper {
   AuthInterceptor(this.client, this.token); 
 
   @override
-  Future onRequest(RequestOptions options) async {
+  Future onRequest(
+    RequestOptions options, 
+    RequestInterceptorHandler handler
+  ) async {
 
-    if (options.extra['no_auth']) {
-      return super.onRequest(options);
+    if (options.extra['no_auth'] ?? false) {
+      return super.onRequest(options, handler);
     }
 
     if (token.isExpired()) {
@@ -53,7 +56,7 @@ class AuthInterceptor extends InterceptorsWrapper {
 
     options.headers['Authorization'] = token.accessToken;
 
-    return super.onRequest(options);
+    return super.onRequest(options, handler);
 
   }
 

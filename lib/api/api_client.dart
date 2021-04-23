@@ -30,13 +30,10 @@ class APIClient implements BaseAPIClient {
   }) async {
     
     final config = route.getConfig();
+    config.baseUrl = options.baseUrl;
+    config.data = data;
 
-    final response = await instance.request(
-      config.path,
-      data: data,
-      options: config
-    );
-
+    final response = await instance.fetch(config);
     final responseData = response.data;
 
     if (response.statusCode == 200) {
