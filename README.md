@@ -11,7 +11,7 @@ This is the way I used to parse generic response object with `dio` package.
 
 Problem with Generic in Flutter is with `T` , we can not call any functions belong to this generic object. So, we can not convert it from json to object. Example:
 
-Let's we have class User, APIRoute (http request base class)
+Let's we have class User, APIClient (http request base class)
 
 ```dart
 class User {
@@ -20,7 +20,7 @@ class User {
   }
 }
 
-class APIRoute {
+class APIClient {
    static Future<T> request<T>() {
      // make http request
      // get response
