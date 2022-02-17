@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'api/api_client.dart';
 import 'api/api_response.dart';
 import 'api/api_route.dart';
-import 'api/interceptors/auth_interceptor.dart';
 import 'api/interceptors/log_interceptor.dart';
 import 'employee.dart';
 
@@ -19,41 +18,37 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   String response = '';
-  APIClient client;
+  APIClient? client;
 
   @override
   void initState() {
     super.initState();
-    client = APIClient(
-      BaseOptions(baseUrl: 'http://dummy.restapiexample.com/api/v1')
-    );
+    client = APIClient(BaseOptions(baseUrl: 'https://katafo.github.io/json'));
     final interceptors = [
-      AuthInterceptor(client, AuthToken(expiredTime: 1616142369958)),
       APILogInterceptor(),
     ];
-    client.instance.interceptors.addAll(interceptors);
+    client?.instance.interceptors.addAll(interceptors);
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: Scaffold(
-        appBar: AppBar(title: Text('API Response'),),
+        appBar: AppBar(
+          title: Text('API Response'),
+        ),
         body: Container(
           padding: const EdgeInsets.all(16),
           color: Colors.white,
           child: Center(
             child: Column(
               children: <Widget>[
-                FlatButton(
-                  color: Colors.yellowAccent,
+                TextButton(
                   child: Text('Fetch Employees'),
                   onPressed: () async {
                     try {
@@ -61,8 +56,7 @@ class _MyAppState extends State<MyApp> {
                       setState(() {
                         response = '${result.length} employees';
                       });
-                    } 
-                    on Exception catch(err) {
+                    } on Exception catch (err) {
                       setState(() {
                         response = err.toString();
                       });
@@ -70,8 +64,7 @@ class _MyAppState extends State<MyApp> {
                   },
                 ),
                 const SizedBox(height: 16),
-                FlatButton(
-                  color: Colors.yellowAccent,
+                TextButton(
                   child: Text('Fetch Employee Details'),
                   onPressed: () async {
                     try {
@@ -79,8 +72,7 @@ class _MyAppState extends State<MyApp> {
                       setState(() {
                         response = emp.toString();
                       });
-                    } 
-                    on Exception catch(err) {
+                    } on Exception catch (err) {
                       setState(() {
                         response = err.toString();
                       });
@@ -98,35 +90,25 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<List<Employee>> fetchEmployeeList() async {
-    
-    final result = await client.request<APIListResponse<Employee>>(
-        route: APIRoute(APIType.listEmployees), 
-        create: () => APIListResponse(create: () => Employee())
-      );
+    final result = await client?.request(
+        route: APIRoute(APIType.listEmployees),
+        create: () => APIListResponse<Employee>(create: () => Employee()));
 
-    final employees = result.response.data ?? [];
+    final employees = result?.response?.data ?? [];
     return employees;
-
   }
 
   Future<Employee> fetchEmployeeDetails(int empID) async {
+    final result = await client?.request(
+        route: APIRoute(APIType.detailsEmployee, routeParams: '$empID'),
+        create: () => APIResponse<Employee>(create: () => Employee()));
 
-    final result = await client.request<APIResponse<Employee>>(
-      route: APIRoute(
-        APIType.detailsEmployee, 
-        routeParams: '$empID'
-      ), 
-      create: () => APIResponse<Employee>(create: () => Employee())
-    );
-
-    final employee = result.response.data;
+    final employee = result?.response?.data;
 
     if (employee != null) {
       return employee;
     }
 
     throw ErrorResponse(message: 'Employee not found');
-
   }
-
 }

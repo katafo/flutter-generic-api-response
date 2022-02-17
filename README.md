@@ -1,6 +1,6 @@
- ## Overview
+## Overview
 
-This is the way I used to parse generic response object with `dio` package. 
+This is the way I used to parse generic response object with `dio` package.
 
 ## Concept
 
@@ -25,7 +25,7 @@ class APIClient {
      // make http request
      // get response
      // use response to parse from json to object T
-     
+
      // problem: we can not call T.fromJson in here. Because Dart don't know what exactly is T object.
    }
 }
@@ -46,7 +46,7 @@ abstract class GenericObject<T> {
 
   // define a typedef with Decodable object
   Create<Decodable> create;
-	
+
   // init object with create param
   GenericObject({ this.create });
 
@@ -60,27 +60,25 @@ abstract class GenericObject<T> {
 }
 ```
 
-
-
 ## Usage
 
-Example: We have json: 
+Example: We have json:
 
 ```json
 {
-	"status": true,
-	"data": {
-		"name": "Phong Cao"
-	}
+  "status": true,
+  "data": {
+    "name": "Phong Cao"
+  }
 }
 ```
 
 1. Define a APIReponse to wrap this json structure
 
 ```dart
-class APIResponse<T> extends GenericObject<T> 
+class APIResponse<T> extends GenericObject<T>
   implements Decodable<APIResponse<T>> {
-  
+
   String status;
   T data;
 
@@ -104,9 +102,9 @@ I implements `Decodable` to override `decode` function. So that, we can parse `A
 
 ```dart
 class User implements Decodable<User> {
-  
+
   String name;
-  
+
   @override
   User decode(dynamic json) {
     name = json['name'];
@@ -122,8 +120,8 @@ Future<User> fetchUser() async {
 
     final client = APIClient();
 
-    final result = await client.request<APIResponse<User>>(
-      manager: APIRoute(APIType.getUser), 
+    final result = await client.request(
+      manager: APIRoute(APIType.getUser),
       create: () => APIResponse<User>(create: () => User())
     );
 
@@ -138,6 +136,6 @@ Future<User> fetchUser() async {
 }
 ```
 
-That's it! You can download my project and try `Employee` example to understand it clearly. 
+That's it! You can download my project and try `Employee` example to understand it clearly.
 
 Thanks!

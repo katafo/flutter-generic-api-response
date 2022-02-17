@@ -4,14 +4,12 @@ abstract class Decodable<T> {
 }
 
 class TypeDecodable<T> implements Decodable<TypeDecodable<T>> {
-
   T value;
-  TypeDecodable({ this.value });
+  TypeDecodable({required this.value});
 
   @override
   TypeDecodable<T> decode(dynamic data) {
     value = data;
     return this;
   }
-
 }

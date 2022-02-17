@@ -1,62 +1,53 @@
 import 'package:dio/dio.dart';
 
-enum APIType {
-
-  listEmployees,
-  detailsEmployee,
-  refreshToken
-
-}
+enum APIType { listEmployees, detailsEmployee }
 
 class APIRoute implements APIRouteConfigurable {
-
   final APIType type;
-  final String routeParams;
+  final String? routeParams;
+  final headers = {
+    'accept': 'application/json',
+    'content-type': 'application/json'
+  };
 
-  APIRoute(this.type, { this.routeParams });
+  APIRoute(this.type, {this.routeParams});
 
   /// Return config of api (method, url, header)
   @override
-  RequestOptions getConfig() {
-
+  RequestOptions? getConfig() {
     // pass extra value to detect public or auth api
-    const noAuth = { 'no_auth': true };
+    final authorize = {'Authorize': true};
 
     switch (type) {
 
       //login
       case APIType.listEmployees:
         return RequestOptions(
-          path: '/employees',
-          method: APIMethod.get,
-          extra: noAuth
-        );
-      
+            path: '/employees/all.json',
+            method: APIMethod.get,
+            extra: authorize);
+
       case APIType.detailsEmployee:
         return RequestOptions(
-          path: '/employees/$routeParams',
+          path: '/employees/$routeParams.json',
           method: APIMethod.get,
-      );
+        );
 
       default:
         return null;
-
     }
-
   }
 }
 
 // ignore: one_member_abstracts
 abstract class APIRouteConfigurable {
-  RequestOptions getConfig();
+  RequestOptions? getConfig();
 }
 
 class APIMethod {
-
-  static const get = 'get';
-  static const post = 'post';
-  static const put = 'put';
-  static const patch = 'patch';
-  static const delete = 'delete';
-
+  static const get = 'GET';
+  static const post = 'POST';
+  static const put = 'PUT';
+  static const patch = 'PATCH';
+  static const delete = 'DELETE';
 }

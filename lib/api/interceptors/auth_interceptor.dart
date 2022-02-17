@@ -1,15 +1,15 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import '../api_client.dart';
 import '../decodable.dart';
 
 class AuthToken implements Decodable<AuthToken> {
+  String? accessToken;
+  String? refreshToken;
+  int? expiredTime;
 
-  String accessToken;
-  String refreshToken;
-  int expiredTime;
-
-  AuthToken({ this.accessToken, this.refreshToken, this.expiredTime });
+  AuthToken({required this.accessToken, this.refreshToken, this.expiredTime});
 
   @override
   AuthToken decode(dynamic data) {
@@ -20,44 +20,37 @@ class AuthToken implements Decodable<AuthToken> {
   Future startRefreshToken() async {
     await Future.delayed(Duration(seconds: 5));
     // assign new access token
-    accessToken = 'eyadfj9803924jjdfkasjdfjsdf';
+    accessToken = 'abcxyz';
   }
 
   bool isExpired() {
     return true;
   }
-  
 }
 
 class AuthInterceptor extends InterceptorsWrapper {
-
   final APIClient client;
-  AuthToken token;
+  final AuthToken? token;
 
-  AuthInterceptor(this.client, this.token); 
+  AuthInterceptor({required this.client, this.token});
 
   @override
   Future onRequest(
-    RequestOptions options, 
-    RequestInterceptorHandler handler
-  ) async {
-
-    if (options.extra['no_auth'] ?? false) {
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    final authorize = options.extra['Authorize'] ?? false;
+    if (!authorize || token == null) {
       return super.onRequest(options, handler);
     }
 
-    if (token.isExpired()) {
+    if (token!.isExpired()) {
       client.instance.lock();
-      print('Lock request for refreshing token...');
-      await token.startRefreshToken();
+      debugPrint('Lock request for refreshing token...');
+      await token!.startRefreshToken();
       client.instance.unlock();
-      print('Refresh token completed!');
+      debugPrint('Refresh token completed!');
     }
 
-    options.headers['Authorization'] = token.accessToken;
-
+    options.headers['Authorization'] = 'Bearer $token';
     return super.onRequest(options, handler);
-
   }
-
 }
